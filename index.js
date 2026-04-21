@@ -5,7 +5,7 @@ const noblox = require("noblox.js");
 
 async function sendToDashboard(data) {
     try {
-        await fetch("https://v0-sjc-bot1.vercel.app", {
+        await fetch("https://v0-sjc-bot1.vercel.app/api/bot/logs", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
