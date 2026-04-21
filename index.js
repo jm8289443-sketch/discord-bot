@@ -5,7 +5,7 @@ const noblox = require("noblox.js");
 
 async function sendToDashboard(data) {
     try {
-        await fetch("https://your-site.vercel.app/api/bot/logs", {
+        await fetch("https://v0-sjc-bot1.vercel.app/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -177,9 +177,12 @@ client.on("messageCreate", async message => {
             const newRole = await getRoleByName(group.groupId, newRankName);
             if (!newRole) throw "Rank not found";
 
-            if (!await checkPromotionDemotionLog(logChannel, user, currentRank, newRole.name))
-                result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
-                throw "No valid promotion log found";
+            if (!await checkPromotionDemotionLog(logChannel, user, currentRank, newRole.name)) {
+    result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
+    throw "No valid promotion log found";
+} else {
+    result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
+}
 
             if (!checkUsage(message.member.nickname)) {
                 userLocks.add(message.member.nickname);
@@ -201,9 +204,12 @@ client.on("messageCreate", async message => {
             const newRole = await getRoleByName(group.groupId, newRankName);
             if (!newRole) throw "Rank not found";
 
-            if (!await checkPromotionDemotionLog(logChannel, user, currentRank, newRole.name))
-                result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
-                throw "No valid demotion log found";
+            if (!await checkPromotionDemotionLog(logChannel, user, currentRank, newRole.name)) {
+    result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
+    throw "No valid demotion log found";
+} else {
+    result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
+}
 
             if (!checkUsage(message.member.nickname)) {
                 userLocks.add(message.member.nickname);
@@ -221,9 +227,12 @@ client.on("messageCreate", async message => {
             const user = args[1];
             const id = await noblox.getIdFromUsername(user);
 
-            if (!await checkAcceptLog(logChannel, user))
-                result.proof = `Attendee Roblox Name: ${user}`;
-                throw "No valid accept log found";
+            if (!await checkAcceptLog(logChannel, user)) {
+    result.proof = `Attendee Roblox Name: ${user}`;
+    throw "No valid accept log found";
+} else {
+    result.proof = `Attendee Roblox Name: ${user}`;
+}
 
             await noblox.handleJoinRequest(group.groupId, id, true);
             await message.reply(`✅ Accepted join request: ${user}`);
