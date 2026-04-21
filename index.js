@@ -5,7 +5,7 @@ const noblox = require("noblox.js");
 
 async function sendToDashboard(data) {
     try {
-        await fetch("https://v0-sjc-bot1.vercel.app/", {
+        await fetch("https://v0-sjc-bot1.vercel.app", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -149,7 +149,7 @@ client.on("messageCreate", async message => {
 
     let result = {
     command: cmd,
-    executor: message.author.username,
+    executor: message.author.id,
     target: args[1] || null,
     success: false,
     reason: null,
@@ -382,7 +382,7 @@ client.on("messageCreate", async message => {
 
             await logBot(group.botLogChannel, {
                 command: "warn",
-                executor: message.author.username,
+                executor: message.author.id,
                 target: user,
                 success: true,
                 reason
