@@ -1,0 +1,19 @@
+{
+  "name": "david-tennyson",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "discord.js": "^14.26.3",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "noblox.js": "^9.0.0"
+  }
+}
