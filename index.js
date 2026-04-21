@@ -1,6 +1,30 @@
+const fetch = require("node-fetch");
 require("dotenv").config();
 const { Client, GatewayIntentBits, EmbedBuilder } = require("discord.js");
 const noblox = require("noblox.js");
+
+async function sendToDashboard(data) {
+    try {
+        await fetch("https://your-site.vercel.app/api/bot/logs", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${process.env.BOT_API_KEY}`
+            },
+            body: JSON.stringify({
+                executor: data.executor,
+                target: data.target || null,
+                command: data.command,
+                success: data.success,
+                reason: data.reason || null,
+                proof: data.proof || null,
+                timestamp: new Date().toISOString()
+            })
+        });
+    } catch (err) {
+        console.error("Failed to send to dashboard:", err);
+    }
+}
 
 const client = new Client({
     intents: [
@@ -123,7 +147,14 @@ client.on("messageCreate", async message => {
     const args = message.content.trim().split(/\s+/);
     const cmd = args[0].toLowerCase();
 
-    let result = { command: cmd, executor: message.author.username, target: args[1], success: false };
+    let result = {
+    command: cmd,
+    executor: message.author.username,
+    target: args[1] || null,
+    success: false,
+    reason: null,
+    proof: null
+};
 
     try {
         // ===== LOCKS =====
@@ -147,6 +178,7 @@ client.on("messageCreate", async message => {
             if (!newRole) throw "Rank not found";
 
             if (!await checkPromotionDemotionLog(logChannel, user, currentRank, newRole.name))
+                result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
                 throw "No valid promotion log found";
 
             if (!checkUsage(message.member.nickname)) {
@@ -170,6 +202,7 @@ client.on("messageCreate", async message => {
             if (!newRole) throw "Rank not found";
 
             if (!await checkPromotionDemotionLog(logChannel, user, currentRank, newRole.name))
+                result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
                 throw "No valid demotion log found";
 
             if (!checkUsage(message.member.nickname)) {
@@ -189,6 +222,7 @@ client.on("messageCreate", async message => {
             const id = await noblox.getIdFromUsername(user);
 
             if (!await checkAcceptLog(logChannel, user))
+                result.proof = `Attendee Roblox Name: ${user}`;
                 throw "No valid accept log found";
 
             await noblox.handleJoinRequest(group.groupId, id, true);
@@ -430,6 +464,7 @@ client.on("messageCreate", async message => {
     }
 
     await logBot(group.botLogChannel, result);
+await sendToDashboard(result);
 });
 
 client.login(process.env.DISCORD_TOKEN);
