@@ -177,11 +177,12 @@ client.on("messageCreate", async message => {
             const newRole = await getRoleByName(group.groupId, newRankName);
             if (!newRole) throw "Rank not found";
 
-            if (!await checkPromotionDemotionLog(logChannel, user, currentRank, newRole.name)) {
-    result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
+            const valid = await checkPromotionDemotionLog(logChannel, user, currentRank, newRole.name);
+
+result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
+
+if (!valid) {
     throw "No valid promotion log found";
-} else {
-    result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
 }
 
             if (!checkUsage(message.member.nickname)) {
@@ -204,11 +205,12 @@ client.on("messageCreate", async message => {
             const newRole = await getRoleByName(group.groupId, newRankName);
             if (!newRole) throw "Rank not found";
 
-            if (!await checkPromotionDemotionLog(logChannel, user, currentRank, newRole.name)) {
-    result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
-    throw "No valid demotion log found";
-} else {
-    result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
+            const valid = await checkPromotionDemotionLog(logChannel, user, currentRank, newRole.name);
+
+result.proof = `Username: ${user}, From: ${currentRank}, To: ${newRole.name}`;
+
+if (!valid) {
+    throw "No valid promotion log found";
 }
 
             if (!checkUsage(message.member.nickname)) {
@@ -227,11 +229,12 @@ client.on("messageCreate", async message => {
             const user = args[1];
             const id = await noblox.getIdFromUsername(user);
 
-            if (!await checkAcceptLog(logChannel, user)) {
-    result.proof = `Attendee Roblox Name: ${user}`;
-    throw "No valid accept log found";
-} else {
-    result.proof = `Attendee Roblox Name: ${user}`;
+            const valid = await checkAcceptLog(logChannel, user);
+
+result.proof = `Attendee Roblox Name: ${user}`;
+
+if (!valid) {
+    throw new Error("No valid accept log found");
 }
 
             await noblox.handleJoinRequest(group.groupId, id, true);
