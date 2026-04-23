@@ -118,7 +118,18 @@ async function checkPromotionDemotionLog(channel, username, currentRank, newRank
 
 async function checkAcceptLog(channel, username) {
     const messages = await channel.messages.fetch({ limit: 100 });
-    return messages.some(msg => msg.content.includes(`Attendee Roblox Name: ${username}`));
+
+    return messages.some(msg => {
+        const content = msg.content;
+
+        // Extract Roblox name using regex (strict match)
+        const match = content.match(/Attendee Roblox Name:\s*(.+)/i);
+        if (!match) return false;
+
+        const loggedUser = match[1].trim().toLowerCase();
+
+        return loggedUser === username.toLowerCase();
+    });
 }
 
 // ================= LOGGING =================
