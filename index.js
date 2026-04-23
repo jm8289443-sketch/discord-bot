@@ -247,22 +247,31 @@ if (!valid) {
 
         // ================= ACCEPT =================
         else if (cmd === "!accept") {
-            if (!perm || !perm.accept) throw "You don't have permission to accept";
-            const user = args[1];
-            const id = await noblox.getIdFromUsername(user);
+    if (!perm || !perm.accept) throw "You don't have permission to accept";
 
-            const valid = await checkAcceptLog(logChannel, user);
+    const user = args[1];
+    if (!user) throw "Provide a username";
 
-result.proof = `Attendee Roblox Name: ${user}`;
+    const id = await noblox.getIdFromUsername(user);
 
-if (!valid) {
-    throw new Error("No valid accept log found");
+    // ✅ USE TRYOUT LOG CHANNEL (NOT logChannel)
+    const tryoutChannel = await client.channels.fetch(group.tryoutChannel);
+
+    // (optional but recommended) small delay to ensure message is fetched
+    await new Promise(res => setTimeout(res, 1000));
+
+    const valid = await checkAcceptLog(tryoutChannel, user);
+
+    result.proof = `Attendee Roblox Name: ${user}`;
+
+    if (!valid) {
+        throw new Error("No valid accept log found");
+    }
+
+    await noblox.handleJoinRequest(group.groupId, id, true);
+    await message.reply(`✅ Accepted join request: ${user}`);
+    result.success = true;
 }
-
-            await noblox.handleJoinRequest(group.groupId, id, true);
-            await message.reply(`✅ Accepted join request: ${user}`);
-            result.success = true;
-        }
 
         // ================= KICK =================
         else if (cmd === "!kick") {
