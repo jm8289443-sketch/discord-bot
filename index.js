@@ -119,17 +119,28 @@ async function checkPromotionDemotionLog(channel, username, currentRank, newRank
 async function checkAcceptLog(channel, username) {
     const messages = await channel.messages.fetch({ limit: 100 });
 
-    return messages.some(msg => {
+    // Convert to array and sort newest → oldest
+    const sorted = Array.from(messages.values())
+        .sort((a, b) => b.createdTimestamp - a.createdTimestamp);
+
+    for (const msg of sorted) {
         const content = msg.content;
 
-        // Extract Roblox name using regex (strict match)
         const match = content.match(/Attendee Roblox Name:\s*(.+)/i);
-        if (!match) return false;
+        if (!match) continue;
 
-        const loggedUser = match[1].trim().toLowerCase();
+        const loggedUser = match[1]
+            .replace(/[`*_~]/g, "")
+            .trim()
+            .toLowerCase();
 
-        return loggedUser === username.toLowerCase();
-    });
+        if (loggedUser === username.toLowerCase()) {
+            // ✅ FIRST MATCH = MOST RECENT VALID LOG
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // ================= LOGGING =================
