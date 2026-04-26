@@ -107,14 +107,14 @@ async function getRoleByName(groupId, name) {
 }
 
 // ================= STRICT LOG CHECK =================
-async function checkPromotionDemotionLog(channel, username, 
-currentRank, newRank) { 
-	const messages = await channel.messages.fetch({ limit: 100 }); 
-    return messages.some(msg => { 
-	 return msg.content.includes(Username: ${username}) && 		
-        msg.content.includes(Current Rank: ${currentRank}) && 	
-        msg.content.includes(New Rank: ${newRank}); 
-}); 
+async function checkPromotionDemotionLog(channel, username, currentRank, newRank) {
+    const messages = await channel.messages.fetch({ limit: 100 });
+
+    return messages.some(msg => {
+        return msg.content.includes(`Username: ${username}`) &&
+               msg.content.includes(`Current Rank: ${currentRank}`) &&
+               msg.content.includes(`New Rank: ${newRank}`);
+    });
 }
 
 async function checkAcceptLog(channel, username) {
