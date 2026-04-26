@@ -109,11 +109,34 @@ async function getRoleByName(groupId, name) {
 // ================= STRICT LOG CHECK =================
 async function checkPromotionDemotionLog(channel, username, currentRank, newRank) {
     const messages = await channel.messages.fetch({ limit: 100 });
-    return messages.some(msg => {
-        return msg.content.includes(`Username: ${username}`) &&
-               msg.content.includes(`Current Rank: ${currentRank}`) &&
-               msg.content.includes(`New Rank: ${newRank}`);
-    });
+
+    const sorted = Array.from(messages.values())
+        .sort((a, b) => b.createdTimestamp - a.createdTimestamp);
+
+    for (const msg of sorted) {
+        const content = msg.content;
+
+        // Extract values using regex
+        const userMatch = content.match(/Username:\s*(.+)/i);
+        const currentMatch = content.match(/Current Rank:\s*(.+)/i);
+        const newMatch = content.match(/New Rank:\s*(.+)/i);
+
+        if (!userMatch || !currentMatch || !newMatch) continue;
+
+        const logUser = userMatch[1].trim().toLowerCase();
+        const logCurrent = currentMatch[1].trim().toLowerCase();
+        const logNew = newMatch[1].trim().toLowerCase();
+
+        if (
+            logUser === username.toLowerCase() &&
+            logCurrent === currentRank.toLowerCase() &&
+            logNew === newRank.toLowerCase()
+        ) {
+            return true; // ✅ newest valid match
+        }
+    }
+
+    return false;
 }
 
 async function checkAcceptLog(channel, username) {
